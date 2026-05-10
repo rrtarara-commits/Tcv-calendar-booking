@@ -1,0 +1,132 @@
+// Version: 3.0.0
+type BookingLink__278432142 =
+  {
+    createdAt : Time__900049286;
+    description : Text;
+    duration : Duration__46646103;
+    id : Text;
+    isActive : Bool;
+    name : Text;
+    updatedAt : Time__900049286
+  };
+type Booking__1057793126 =
+  {
+    bookingId : Text;
+    clientEmail : Text;
+    clientName : Text;
+    createdAt : Int;
+    fileUrls : [ExternalBlob__671167343];
+    isCancelled : Bool;
+    linkId : Text;
+    managementToken : Text;
+    purpose : Text;
+    timeSlotEnd : Int;
+    timeSlotStart : Int
+  };
+type BusyOverride__834941452 =
+  {isBookable : Bool; linkId : Text; slotEnd : Int; slotStart : Int};
+type Data__159895909<T> = {var count : Nat__490723111; elements : [var ?T]};
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type Duration__46646103 = {#min15; #min30; #min45; #min60};
+type ExternalBlob__671167343 = Blob;
+type GoogleCredentials__118667612 =
+  {accessToken : Text; expiresAt : Int; refreshToken : Text};
+type Int__270357528 = Int__616954475;
+type Int__616954475 = Int;
+type Internal__667636161<T> =
+  {children : [var ?Node__92254746<T>]; data : Data__159895909<T>};
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__520550824<T> = {data : Data__159895909<T>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type Node__92254746<T> =
+  {#internal : Internal__667636161<T>; #leaf : Leaf__520550824<T>};
+type OldBookingLinksState__278367399 =
+  {
+    googleCreds : Map__605269027<Text, GoogleCredentials__118667612>;
+    var hostPrincipal : Principal;
+    links : Map__605269027<Text, BookingLink__278432142>;
+    var nextId : Nat;
+    overrideDetails : Map__605269027<Text, BusyOverride__834941452>;
+    overrides : Map__605269027<Text, Set__532252804<Int>>
+  };
+type OldBookingsState__314678216 =
+  {
+    bookings : Map__605269027<Text, Booking__1057793126>;
+    var nextId : Nat;
+    tokenIndex : Map__605269027<Text, Text>
+  };
+type OldUsersState__396992953 =
+  {
+    inviteTokens : Map__605269027<Text, Text>;
+    principalIndex : Map__605269027<Text, Text>;
+    users : Map__605269027<Text, User__98118558>
+  };
+type Set__532252804<T> = Set__710576254<T>;
+type Set__710576254<T> =
+  {var root : Node__92254746<T>; var size : Nat__490723111};
+type Time__796480547 = Int__270357528;
+type Time__900049286 = Time__796480547;
+type UserRole__1073662873 = {#admin; #guest; #user};
+type UserRole__41952412 = {#admin; #user};
+type UserStatus__357598751 = {#active; #invited};
+type User__98118558 =
+  {
+    createdAt : Time__900049286;
+    email : Text;
+    name : Text;
+    principal : ?Principal;
+    role : UserRole__41952412;
+    status : UserStatus__357598751
+  };
+actor ({
+  stable var _appBaseUrl : Text;
+  stable accessControlState :
+    {
+      var adminAssigned : Bool;
+      userRoles : Map__605269027<Principal, UserRole__1073662873>
+    };
+  in var appBaseUrl : Text;
+  in bookingLinksState : OldBookingLinksState__278367399;
+  in bookingsState : OldBookingsState__314678216;
+  in usersState : OldUsersState__396992953
+}, {
+  stable var _appBaseUrl : Text;
+  stable accessControlState :
+    {
+      var adminAssigned : Bool;
+      userRoles : Map__605269027<Principal, UserRole__1073662873>
+    };
+  stable var appBaseUrl : Text;
+  stable bookingLinksState :
+    {
+      googleCreds : Map__605269027<Text, GoogleCredentials__118667612>;
+      var googleOAuthClientId : Text;
+      var hostPrincipal : Principal;
+      links : Map__605269027<Text, BookingLink__278432142>;
+      var nextId : Nat;
+      overrideDetails : Map__605269027<Text, BusyOverride__834941452>;
+      overrides : Map__605269027<Text, Set__532252804<Int>>
+    };
+  stable bookingsState :
+    {
+      bookings : Map__605269027<Text, Booking__1057793126>;
+      var nextId : Nat;
+      tokenIndex : Map__605269027<Text, Text>
+    };
+  stable usersState :
+    {
+      inviteTokens : Map__605269027<Text, Text>;
+      principalIndex : Map__605269027<Text, Text>;
+      users : Map__605269027<Text, User__98118558>
+    }
+}) ;

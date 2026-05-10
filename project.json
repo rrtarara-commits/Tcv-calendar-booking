@@ -1,0 +1,21 @@
+{
+  "overview": "BookSlot is a calendar booking system for client meetings with Google Calendar integration, invite-based team access, and role-based controls.",
+  "features": [
+    "Google OAuth login",
+    "Invite-link based user onboarding",
+    "Role-based access (admin/user)",
+    "Calendar booking with manual overrides",
+    "Client self-service reschedule and cancel",
+    "Calendly-style booking experience",
+    "Secure appointment management tokens"
+  ],
+  "category": "productivity",
+  "tags": [
+    "booking",
+    "calendar",
+    "scheduling",
+    "google-auth",
+    "team-management"
+  ],
+  "last_updated": "2026-05-06T04:35:49.791Z"
+}

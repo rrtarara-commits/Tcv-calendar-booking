@@ -1,0 +1,210 @@
+type http_request_result = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type http_header = 
+ record {
+   name: text;
+   value: text;
+ };
+type _ImmutableObjectStorageRefillResult = 
+ record {
+   success: opt bool;
+   topped_up_amount: opt nat;
+ };
+type _ImmutableObjectStorageRefillInformation = record {
+                                                  proposed_top_up_amount:
+                                                   opt nat;};
+type _ImmutableObjectStorageCreateCertificateResult = 
+ record {
+   blob_hash: text;
+   method: text;
+ };
+type UserView = 
+ record {
+   createdAt: int;
+   email: text;
+   name: text;
+   "principal": opt text;
+   role: UserRole;
+   status: UserStatus;
+ };
+type UserStatus = 
+ variant {
+   active;
+   invited;
+ };
+type UserRole__1 = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type UserRole = 
+ variant {
+   admin;
+   user;
+ };
+type TransformationOutput = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type TransformationInput = 
+ record {
+   context: blob;
+   response: http_request_result;
+ };
+type TimeSlot = 
+ record {
+   end: int;
+   start: int;
+ };
+type InviteInput = 
+ record {
+   email: text;
+   name: text;
+   role: UserRole;
+ };
+type GoogleCredentialStatus = 
+ record {
+   expiresAt: opt int;
+   hasCredentials: bool;
+   isExpired: bool;
+ };
+type ExternalBlob = blob;
+type Duration = 
+ variant {
+   min15;
+   min30;
+   min45;
+   min60;
+ };
+type CreateBookingInput = 
+ record {
+   clientEmail: text;
+   clientName: text;
+   fileUrls: vec ExternalBlob;
+   linkId: text;
+   purpose: text;
+   timeSlotEnd: int;
+   timeSlotStart: int;
+ };
+type BusyOverride = 
+ record {
+   isBookable: bool;
+   linkId: text;
+   slotEnd: int;
+   slotStart: int;
+ };
+type BusyInterval = 
+ record {
+   end: int;
+   start: int;
+ };
+type BookingView = 
+ record {
+   bookingId: text;
+   clientEmail: text;
+   clientName: text;
+   createdAt: int;
+   fileUrls: vec ExternalBlob;
+   isCancelled: bool;
+   linkId: text;
+   managementToken: text;
+   purpose: text;
+   timeSlotEnd: int;
+   timeSlotStart: int;
+ };
+type BookingLinkView = 
+ record {
+   createdAt: int;
+   description: text;
+   duration: Duration;
+   id: text;
+   isActive: bool;
+   name: text;
+   updatedAt: int;
+ };
+type BookingLinkInput = 
+ record {
+   description: text;
+   duration: Duration;
+   name: text;
+ };
+service : {
+  _immutableObjectStorageBlobsAreLive: (hashes: vec blob) -> (vec bool) query;
+  _immutableObjectStorageBlobsToDelete: () -> (vec blob) query;
+  _immutableObjectStorageConfirmBlobDeletion: (blobs: vec blob) -> ();
+  _immutableObjectStorageCreateCertificate: (blobHash: text) ->
+   (_ImmutableObjectStorageCreateCertificateResult);
+  /// Set the base URL used in management links sent to clients.
+  _immutableObjectStorageRefillCashier: (refillInformation:
+   opt _ImmutableObjectStorageRefillInformation) ->
+   (_ImmutableObjectStorageRefillResult);
+  /// Get the current app base URL (for debugging).
+  _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
+  _initializeAccessControl: () -> ();
+  acceptInvite: (token: text) -> (variant {
+                                    err: text;
+                                    ok: UserView;
+                                  });
+  assignCallerUserRole: (user: principal, role: UserRole__1) -> ();
+  cancelBooking: (bookingId: text) -> (bool);
+  cancelBookingByToken: (token: text) -> (variant {
+                                            err: text;
+                                            ok: bool;
+                                          });
+  changeUserRole: (email: text, role: UserRole) -> (bool);
+  createBooking: (input: CreateBookingInput, busyIntervals: vec BusyInterval,
+   appBaseUrl: text) -> (BookingView);
+  createBookingLink: (input: BookingLinkInput) -> (BookingLinkView);
+  deleteBookingLink: (linkId: text) -> (bool);
+  /// Set the base URL used in management links sent to clients.
+  fetchGoogleCalendarFreeBusy: (calendarId: text, timeMin: text, timeMax:
+   text) -> (text);
+  /// Get the current app base URL (for debugging).
+  getAppBaseUrl: () -> (text) query;
+  getAvailableSlots: (linkId: text, rangeStart: int, rangeEnd: int,
+   busyIntervals: vec BusyInterval) -> (vec TimeSlot) query;
+  getBookingByToken: (token: text) -> (opt BookingView) query;
+  getBookingLink: (linkId: text) -> (opt BookingLinkView) query;
+  getCallerUserRole: () -> (UserRole__1) query;
+  getGoogleCalendarCredentialStatus: () -> (GoogleCredentialStatus);
+  getGoogleOAuthClientId: () -> (text);
+  getMyUserInfo: () -> (opt UserView);
+  getOverridesForLink: (linkId: text) -> (vec BusyOverride);
+  hasGoogleCalendarCredentials: () -> (bool);
+  inviteUser: (input: InviteInput) -> (text);
+  isCallerAdmin: () -> (bool) query;
+  listBookingLinks: () -> (vec BookingLinkView);
+  listBookings: () -> (vec BookingView);
+  listUsers: () -> (vec UserView);
+  refreshGoogleCalendarCredentials: () -> (variant {
+                                             err: text;
+                                             ok: bool;
+                                           });
+  removeUser: (email: text) -> (bool);
+  rescheduleBookingByToken: (token: text, newTimeSlotStart: int,
+   newTimeSlotEnd: int, busyIntervals: vec BusyInterval, appBaseUrl: 
+   text) -> (variant {
+               err: text;
+               ok: BookingView;
+             });
+  /// Set the base URL used in management links sent to clients.
+  setAppBaseUrl: (url: text) -> ();
+  setBookingLinkActive: (linkId: text, isActive: bool) -> (bool);
+  setGoogleCalendarCredentials: (accessToken: text, refreshToken: text,
+   expiresAt: int) -> ();
+  setGoogleOAuthClientId: (clientId: text) -> ();
+  setHostPrincipal: (p: principal) -> ();
+  setUsersAppBaseUrl: (url: text) -> ();
+  toggleBusyOverride: (linkId: text, slotStart: int, slotEnd: int,
+   isBookable: bool) -> (bool);
+  transform: (input: TransformationInput) -> (TransformationOutput) query;
+  updateBookingLink: (linkId: text, input: BookingLinkInput) ->
+   (opt BookingLinkView);
+}
