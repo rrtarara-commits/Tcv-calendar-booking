@@ -43,19 +43,19 @@ export function useAvailableSlots({
 }
 
 export function useGoogleCalendarFreeBusy(
-  calendarId: string | undefined,
+  linkId: string | undefined,
   timeMin: string,
   timeMax: string,
 ) {
   const { actor, isFetching } = useActor(createActor);
 
   return useQuery<string>({
-    queryKey: ["freeBusy", calendarId, timeMin, timeMax],
+    queryKey: ["freeBusy", linkId, timeMin, timeMax],
     queryFn: async () => {
-      if (!actor || !calendarId) return "{}";
-      return actor.fetchGoogleCalendarFreeBusy(calendarId, timeMin, timeMax);
+      if (!actor || !linkId) return "{}";
+      return actor.fetchGoogleCalendarFreeBusyForLink(linkId, timeMin, timeMax);
     },
-    enabled: !!actor && !isFetching && !!calendarId,
+    enabled: !!actor && !isFetching && !!linkId && !!timeMin && !!timeMax,
     staleTime: 5 * 60_000,
   });
 }
